@@ -18,3 +18,4 @@ static/moment.js
 *.png
 blacklist.json
 servers.json
+static/
