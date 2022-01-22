@@ -8,6 +8,8 @@ This is a low tech log server with the main functions:
 
 Many log server solutions exist, but none fit my requirements of flexibility and simplicity (as with much of my other *simple-something* projects).
 
+![Example Web Interface](https://m.athq.de/pictures/sls_example_pic.png)
+
 ## Parse Config
 The directory *parsing/* may contain *JSON* files, indicating a formating, for one or more services, in the form of:
 
