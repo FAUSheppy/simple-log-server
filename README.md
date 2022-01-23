@@ -8,6 +8,8 @@ This is a low tech log server with the main functions:
 
 Many log server solutions exist, but none fit my requirements of flexibility and simplicity (as with much of my other *simple-something* projects).
 
+![Example Web Interface](https://m.athq.de/pictures/sls_example_pic.png)
+
 ## Parse Config
 The directory *parsing/* may contain *JSON* files, indicating a formating, for one or more services, in the form of:
 
@@ -46,3 +48,56 @@ and a variable `APPLY_TO_SERVICE` set to a list of service names for which this 
 
     # or apply to all services
     APPLY_TO_SERVICE = None
+
+## Nginx for HTTPS/Basic-Auth
+You can use `mkpasswd` to create an auth-file via
+
+    echo user >> authfile
+    mkpasswd -m sha512crypt >> authfile
+    <input password>
+
+For information about HTTP with nginx refer to [this tutorial](https://medium.com/anti-clickbait-coalition/hassle-free-ssl-with-nginx-f34ddcacf197).
+
+    server {
+
+        listen 80;
+        listen 443 ssl;
+        listen [::]:80;
+        listen [::]:443 ssl;
+
+        server_name _;
+        access_log /var/log/nginx/sls;
+
+        auth_basic "Log Server SLS Auth";
+        auth_basic_user_file "/path/to/auth/file";
+
+        location / {
+            proxy_pass http://host:port;
+        }
+    }
+
+## Submissions
+If you are not running a reverse proxy with *Basic-Auth*, you may omit any authentication related code.
+
+**python**
+
+    import requests
+    url      = http://host/submit
+    jsonDict = { "service"     : "service_name",
+                 "host"        : "hostname",
+                 "contentType" : "contentType",
+                 "severity"    : NUMBER, # 0 -7
+                 "content"     : "content" }
+
+    auth = requests.auth.HTTPBasicAuth(app.config["LOG_AUTH_USER"], app.config["LOG_AUTH_PASS"])
+    r = requests.put(url, json=jsonDict, auth=auth)
+    print(r.status, r.text)
+
+**curl**
+
+    curl -u user:pass -H "Content-Type: application/json" -X PUT http://host/submit -d
+        '{ "service"     : "service_name",
+          "host"        : "hostname",
+          "contentType" : "contentType",
+          "severity"    : NUMBER, # 0 -7
+          "content"     : "content" }'
