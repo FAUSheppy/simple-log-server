@@ -41,7 +41,8 @@ class LogLine(db.Model):
 @app.route('/', methods=["GET", "POST"])
 def main():
     if flask.request.method == "POST":
-        dt = datatable.DataTable(flask.request.form.to_dict(), db, LogLine, SearchHelper)
+        dt = datatable.DataTable(flask.request.form.to_dict(), db,
+                                    LogLine, SearchHelper, truncateUid=True)
         return flask.Response(json.dumps(dt.get()), 200, mimetype='application/json')
     else:
         return flask.render_template("index.html", 

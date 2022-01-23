@@ -4,7 +4,7 @@ COLS_IGNORE_LIST = ["_sa_instance_state"]
 
 class DataTable():
     
-    def __init__(self, data, db, dbClass, searchHelperClass):
+    def __init__(self, data, db, dbClass, searchHelperClass, truncateUid=False):
 
         self.db                = db
         self.draw              = int(data["draw"])
@@ -17,6 +17,8 @@ class DataTable():
         self.searchValue       = data["search[value]"]
         self.searchIsRegex     = data["search[regex]"]
         self.orderDirection    = data["order[0][dir]"]
+
+        self.truncateUid = truncateUid
 
         self.cols = DataTable.staticGetCols(dbClass)
 
@@ -45,7 +47,10 @@ class DataTable():
         for r in resultDicts:
             singleRow = []
             for key in self.cols:
-                singleRow.append(r[key])
+                if key == "uid" and self.truncateUid:
+                    singleRow.append(r[key][:8])
+                else:
+                    singleRow.append(r[key])
             rows.append(singleRow)
 
         d = dict()
@@ -113,4 +118,3 @@ class DataTable():
         nr = int(nr)
         value = getattr(dbClass, self.cols[nr])
         return value
-

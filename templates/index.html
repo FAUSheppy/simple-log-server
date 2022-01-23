@@ -16,7 +16,11 @@
         <thead>
             <tr>
                 {% for item in headerRow %}
-                <th class="th-sm font-weighIt-bold">{{ item }}</th>
+                <th 
+                    {% if loop.index == 0 %} style="max-width: 100px;" {% endif %} 
+                    class="th-sm font-weighIt-bold">
+                        {{ item }}
+                </th>
                 {% endfor %}
             </tr>
         </thead>
@@ -28,10 +32,14 @@
         $(document).ready(function () {
             dt = $('#tableMain').DataTable({
                 serverSide: true,
-                    ajax: {
+                ajax: {
                     url: '/',
                     type: 'POST'
-                }
+                },
+                columnDefs : [
+                    { width: 100, targets: 0 }
+                ],
+                fixedColumns : true
             });
             $('.dataTables_length').addClass('bs-select');
         });
