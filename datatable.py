@@ -1,10 +1,12 @@
 import sqlalchemy
+import datetime
 
 COLS_IGNORE_LIST = ["_sa_instance_state"]
+FORMAT = "%d.%m.%Y %H:%M"
 
 class DataTable():
     
-    def __init__(self, data, db, dbClass, searchHelperClass, truncateUid=False):
+    def __init__(self, data, db, dbClass, searchHelperClass, truncateUid=False, formatTime=True):
 
         self.db                = db
         self.draw              = int(data["draw"])
@@ -17,6 +19,7 @@ class DataTable():
         self.searchValue       = data["search[value]"]
         self.searchIsRegex     = data["search[regex]"]
         self.orderDirection    = data["order[0][dir]"]
+        self.formatTime        = formatTime
 
         self.truncateUid = truncateUid
 
@@ -49,6 +52,9 @@ class DataTable():
             for key in self.cols:
                 if key == "uid" and self.truncateUid:
                     singleRow.append(r[key][:8])
+                elif key == "timestamp" and self.formatTime:
+                    parsed = datetime.datetime.fromtimestamp(float(r[key]))
+                    singleRow.append(parsed.strftime(FORMAT))
                 else:
                     singleRow.append(r[key])
             rows.append(singleRow)
