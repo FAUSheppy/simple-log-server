@@ -21,6 +21,7 @@ from flask_sqlalchemy import SQLAlchemy
 import datatable
 
 app = flask.Flask('Simple Log Server')
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.sqlite"
 db = SQLAlchemy(app)
 
 class SearchHelper(db.Model):
